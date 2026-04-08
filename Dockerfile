@@ -7,6 +7,7 @@ WORKDIR /app
 
 # Copy Prisma schema BEFORE npm ci so postinstall (prisma generate) can find it
 COPY prisma ./prisma/
+COPY prisma.config.ts ./
 COPY package.json package-lock.json* ./
 RUN npm ci
 
@@ -43,8 +44,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Copy Prisma files for migrations
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./
 COPY --from=deps /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=deps /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=deps /app/node_modules/prisma ./node_modules/prisma
 
 USER nextjs
 
