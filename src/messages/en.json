@@ -25,6 +25,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "matching": "Find a Buddy",
+    "buddy": "Be a Buddy",
     "messages": "Messages",
     "events": "Events",
     "checklist": "Checklist",
@@ -327,6 +328,22 @@
     "terms": "Terms of Service",
     "about": "About Letzwelcome",
     "contact": "Contact",
-    "madeWith": "Made with care in Luxembourg"
+    "madeWith": "Made with care in Luxembourg",
+    "tagline": "Helping newcomers feel at home in Luxembourg.",
+    "about": {
+      "title": "About Letzwelcome",
+      "description": "A community platform helping newcomers integrate and thrive in Luxembourg."
+    },
+    "links": {
+      "title": "Links",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "about": "About Us",
+      "contact": "Contact"
+    },
+    "language": {
+      "title": "Language",
+      "description": "Choose your preferred language"
+    }
   }
 }

@@ -25,6 +25,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "matching": "E Buddy fannen",
+    "buddy": "E Buddy ginn",
     "messages": "Messagen",
     "events": "Evenementer",
     "checklist": "Checklist",
@@ -327,6 +328,22 @@
     "terms": "Notzungsbedingungen",
     "about": "Iwwer Letzwelcome",
     "contact": "Kontakt",
-    "madeWith": "Mat Léift gemaach zu Lëtzebuerg"
+    "madeWith": "Mat Léift gemaach zu Lëtzebuerg",
+    "tagline": "Mir hëllefen Neiankömmlinge sech zu Lëtzebuerg doheem ze fillen.",
+    "about": {
+      "title": "Iwwer Letzwelcome",
+      "description": "Eng Gemeinschaftsplattform fir Neiankömmlinge bei der Integratioun zu Lëtzebuerg ze hëllefen."
+    },
+    "links": {
+      "title": "Linken",
+      "privacy": "Dateschutzpolitik",
+      "terms": "Notzungsbedingungen",
+      "about": "Iwwer eis",
+      "contact": "Kontakt"
+    },
+    "language": {
+      "title": "Sprooch",
+      "description": "Wielt Är Léiflingssprooch"
+    }
   }
 }

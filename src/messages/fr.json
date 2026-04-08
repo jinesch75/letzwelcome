@@ -25,6 +25,7 @@
   "nav": {
     "dashboard": "Tableau de bord",
     "matching": "Trouver un buddy",
+    "buddy": "Devenir buddy",
     "messages": "Messages",
     "events": "Événements",
     "checklist": "Checklist",
@@ -327,6 +328,22 @@
     "terms": "Conditions d'utilisation",
     "about": "À propos de Letzwelcome",
     "contact": "Contact",
-    "madeWith": "Fait avec soin au Luxembourg"
+    "madeWith": "Fait avec soin au Luxembourg",
+    "tagline": "Aidons les nouveaux arrivants à se sentir chez eux au Luxembourg.",
+    "about": {
+      "title": "À propos de Letzwelcome",
+      "description": "Une plateforme communautaire pour aider les nouveaux arrivants à s'intégrer au Luxembourg."
+    },
+    "links": {
+      "title": "Liens",
+      "privacy": "Politique de confidentialité",
+      "terms": "Conditions d'utilisation",
+      "about": "À propos",
+      "contact": "Contact"
+    },
+    "language": {
+      "title": "Langue",
+      "description": "Choisissez votre langue préférée"
+    }
   }
 }
