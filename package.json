@@ -2,9 +2,6 @@
   "name": "letzwelcome",
   "version": "0.1.0",
   "private": true,
-  "prisma": {
-    "config": "prisma/prisma.config.ts"
-  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
