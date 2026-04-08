@@ -1,0 +1,520 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────
+
+enum UserRole {
+  NEWCOMER
+  BUDDY
+  BOTH
+  ADMIN
+}
+
+enum MatchStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  COMPLETED
+  REPORTED
+}
+
+enum ConversationType {
+  MATCH
+  EVENT_GROUP
+}
+
+enum EventType {
+  EVENT
+  WALK
+}
+
+enum ParticipantStatus {
+  INTERESTED
+  CONFIRMED
+}
+
+enum ReportCategory {
+  HARASSMENT
+  INAPPROPRIATE
+  SCAM
+  THREATS
+  IDENTITY
+  OTHER
+}
+
+enum ReportStatus {
+  OPEN
+  INVESTIGATING
+  RESOLVED
+  DISMISSED
+}
+
+enum ContentType {
+  PHOTO
+  TEXT
+  EVENT
+  CLUB
+}
+
+enum VerificationType {
+  EMAIL
+  GOOGLE
+  LINKEDIN
+  UNILU
+  ADMIN_MANUAL
+}
+
+enum BadgeType {
+  BUDDY
+  NEWCOMER
+}
+
+enum RouteDifficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum BuddyStatus {
+  AVAILABLE
+  PAUSED
+  INACTIVE
+}
+
+// ─── Core User ───────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String?
+  name          String
+  role          UserRole  @default(NEWCOMER)
+  emailVerified DateTime?
+  image         String?
+  locale        String    @default("en")
+  gdprConsent   Boolean   @default(false)
+  gdprConsentAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  lastActiveAt  DateTime  @default(now())
+  suspended     Boolean   @default(false)
+  suspendedAt   DateTime?
+  suspendReason String?
+
+  // Email verification
+  verificationToken        String?   @unique
+  verificationTokenExpires DateTime?
+
+  // Password reset
+  passwordResetToken        String?   @unique
+  passwordResetTokenExpires DateTime?
+
+  profile       Profile?
+  buddyProfile  BuddyProfile?
+  accounts      Account[]
+  sessions      Session[]
+
+  // Matching
+  matchesAsNewcomer Match[]  @relation("NewcomerMatches")
+  matchesAsBuddy    Match[]  @relation("BuddyMatches")
+  reviewsGiven      Review[] @relation("ReviewsGiven")
+  reviewsReceived   Review[] @relation("ReviewsReceived")
+
+  // Messaging
+  messagesSent Message[]
+
+  // Events
+  eventsCreated      Event[]
+  eventParticipation EventParticipant[]
+
+  // Checklist
+  checklistProgress UserChecklistProgress[]
+
+  // Safety
+  reportsFiled    AbuseReport[] @relation("ReportsFiled")
+  reportsReceived AbuseReport[] @relation("ReportsReceived")
+  reportsResolved AbuseReport[] @relation("ReportsResolved")
+  contentFlags    ContentFlag[]
+
+  // Recognition
+  badges    UserBadge[]
+  verifications VerificationRecord[]
+
+  // Admin
+  adminLogs AdminLog[]
+
+  @@index([email])
+  @@index([role])
+  @@index([deletedAt])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Profile ─────────────────────────────────────────────
+
+model Profile {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  arrivalDate         DateTime?
+  countryOfOrigin     String?
+  currentRegion       String?
+  languagesSpoken     String[] @default([])
+  bio                 String?  @db.Text
+  familySituation     String?
+  professionalBackground String?
+  interests           String[] @default([])
+  preferredMeetingStyle String?
+  availability        String?
+  ageRangePreference  String?
+  genderPreference    String?
+  avatarUrl           String?
+  onboardingCompleted Boolean  @default(false)
+  needsHelp           String[] @default([])
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BuddyProfile {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  expertiseAreas       String[] @default([])
+  regionsServed        String[] @default([])
+  maxActiveConnections Int      @default(3)
+  isAcceptingMatches   Boolean  @default(true)
+  buddyStatus          BuddyStatus @default(AVAILABLE)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── Matching & Messaging ────────────────────────────────
+
+model Match {
+  id              String      @id @default(cuid())
+  newcomerId      String
+  buddyId         String
+  status          MatchStatus @default(PENDING)
+  personalMessage String?     @db.Text
+  createdAt       DateTime    @default(now())
+  acceptedAt      DateTime?
+  completedAt     DateTime?
+
+  newcomer     User          @relation("NewcomerMatches", fields: [newcomerId], references: [id])
+  buddy        User          @relation("BuddyMatches", fields: [buddyId], references: [id])
+  reviews      Review[]
+  conversation Conversation?
+
+  @@index([newcomerId])
+  @@index([buddyId])
+  @@index([status])
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  matchId    String
+  reviewerId String
+  buddyId    String
+  rating     Int
+  text       String?  @db.Text
+  createdAt  DateTime @default(now())
+
+  match    Match @relation(fields: [matchId], references: [id])
+  reviewer User  @relation("ReviewsGiven", fields: [reviewerId], references: [id])
+  buddy    User  @relation("ReviewsReceived", fields: [buddyId], references: [id])
+
+  @@index([buddyId])
+}
+
+model Conversation {
+  id        String           @id @default(cuid())
+  type      ConversationType @default(MATCH)
+  matchId   String?          @unique
+  eventId   String?          @unique
+  createdAt DateTime         @default(now())
+
+  match    Match?    @relation(fields: [matchId], references: [id])
+  event    Event?    @relation(fields: [eventId], references: [id])
+  messages Message[]
+
+  @@index([matchId])
+  @@index([eventId])
+}
+
+model Message {
+  id             String    @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String    @db.Text
+  readAt         DateTime?
+  createdAt      DateTime  @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+  sender       User         @relation(fields: [senderId], references: [id])
+
+  @@index([conversationId])
+  @@index([senderId])
+}
+
+// ─── Events & Clubs ──────────────────────────────────────
+
+model Event {
+  id                   String    @id @default(cuid())
+  creatorId            String
+  clubId               String?
+  title                String
+  description          String    @db.Text
+  type                 EventType @default(EVENT)
+  region               String
+  date                 DateTime
+  meetingPoint         String?
+  language             String
+  category             String
+  maxParticipants      Int?
+  autopedestreRouteId  String?
+  imageUrl             String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  creator      User               @relation(fields: [creatorId], references: [id])
+  club         Club?              @relation(fields: [clubId], references: [id])
+  route        AutopedestreRoute? @relation(fields: [autopedestreRouteId], references: [id])
+  participants EventParticipant[]
+  conversation Conversation?
+
+  @@index([creatorId])
+  @@index([clubId])
+  @@index([region])
+  @@index([date])
+}
+
+model EventParticipant {
+  id      String            @id @default(cuid())
+  eventId String
+  userId  String
+  status  ParticipantStatus @default(INTERESTED)
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@unique([eventId, userId])
+}
+
+model AutopedestreRoute {
+  id                 String          @id @default(cuid())
+  name               String
+  region             String
+  difficulty         RouteDifficulty
+  distanceKm         Float
+  durationMinutes    Int
+  visitLuxembourgUrl String?
+  description        String          @db.Text
+
+  events Event[]
+}
+
+model Club {
+  id               String   @id @default(cuid())
+  name             String
+  description      String   @db.Text
+  region           String
+  activityType     String
+  languages        String[] @default([])
+  meetingFrequency String?
+  contactEmail     String?
+  contactUrl       String?
+  benevolatLink    String?
+  imageUrl         String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  events Event[]
+
+  @@index([region])
+}
+
+// ─── Newcomer Checklist ──────────────────────────────────
+
+model ChecklistItem {
+  id             String   @id @default(cuid())
+  titleKey       String
+  descriptionKey String
+  category       String
+  order          Int
+  region         String?
+  externalLinks  String[] @default([])
+  isEuOnly       Boolean  @default(false)
+  isNonEuOnly    Boolean  @default(false)
+  isFamilyOnly   Boolean  @default(false)
+  stepsKey       String?
+
+  progress UserChecklistProgress[]
+
+  @@index([category])
+}
+
+model UserChecklistProgress {
+  id              String    @id @default(cuid())
+  userId          String
+  checklistItemId String
+  completed       Boolean   @default(false)
+  completedAt     DateTime?
+
+  user          User          @relation(fields: [userId], references: [id])
+  checklistItem ChecklistItem @relation(fields: [checklistItemId], references: [id])
+
+  @@unique([userId, checklistItemId])
+}
+
+// ─── Safety & Trust ──────────────────────────────────────
+
+model AbuseReport {
+  id             String         @id @default(cuid())
+  reporterId     String
+  reportedUserId String
+  matchId        String?
+  category       ReportCategory
+  description    String         @db.Text
+  status         ReportStatus   @default(OPEN)
+  adminNotes     String?        @db.Text
+  createdAt      DateTime       @default(now())
+  resolvedAt     DateTime?
+  resolvedById   String?
+
+  reporter     User @relation("ReportsFiled", fields: [reporterId], references: [id])
+  reportedUser User @relation("ReportsReceived", fields: [reportedUserId], references: [id])
+  resolvedBy   User? @relation("ReportsResolved", fields: [resolvedById], references: [id])
+
+  @@index([status])
+  @@index([reportedUserId])
+}
+
+model ContentFlag {
+  id          String      @id @default(cuid())
+  reporterId  String
+  contentType ContentType
+  contentId   String
+  reason      String
+  status      ReportStatus @default(OPEN)
+  createdAt   DateTime     @default(now())
+
+  reporter User @relation(fields: [reporterId], references: [id])
+
+  @@index([status])
+}
+
+// ─── Recognition ─────────────────────────────────────────
+
+model Badge {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String
+  criteria    String
+  type        BadgeType
+  iconUrl     String?
+
+  users UserBadge[]
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  awardedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  badge Badge @relation(fields: [badgeId], references: [id])
+
+  @@unique([userId, badgeId])
+}
+
+// ─── Verification ────────────────────────────────────────
+
+model VerificationRecord {
+  id         String           @id @default(cuid())
+  userId     String
+  type       VerificationType
+  verifiedAt DateTime         @default(now())
+  metadata   String?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, type])
+}
+
+// ─── Admin ───────────────────────────────────────────────
+
+model AdminLog {
+  id          String   @id @default(cuid())
+  adminUserId String
+  action      String
+  targetType  String
+  targetId    String
+  details     String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  admin User @relation(fields: [adminUserId], references: [id])
+
+  @@index([adminUserId])
+  @@index([createdAt])
+}
+
+// ─── Platform ────────────────────────────────────────────
+
+model Announcement {
+  id        String    @id @default(cuid())
+  message   String    @db.Text
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+}
+
+model GuidanceArticle {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  titleKey  String
+  contentKey String
+  category  String
+  order     Int      @default(0)
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
