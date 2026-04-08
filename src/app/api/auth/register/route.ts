@@ -32,15 +32,18 @@ export async function POST(req: NextRequest) {
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const tokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
+    // Auto-verify if SMTP is not configured
+    const smtpConfigured = process.env.SMTP_USER && process.env.SMTP_PASSWORD;
+
     // Create user with profile
     const user = await prisma.user.create({
       data: {
         email: validated.email,
         name: validated.name,
         passwordHash,
-        emailVerified: null,
-        verificationToken,
-        verificationTokenExpires: tokenExpires,
+        emailVerified: smtpConfigured ? null : new Date(),
+        verificationToken: smtpConfigured ? verificationToken : null,
+        verificationTokenExpires: smtpConfigured ? tokenExpires : null,
         profile: {
           create: {
             bio: '',
@@ -49,21 +52,26 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Send verification email
-    try {
-      await sendVerificationEmail(
-        validated.email,
-        `${process.env.NEXTAUTH_URL}/en/verify-email?token=${verificationToken}`
-      );
-    } catch (emailError) {
-      console.error('Failed to send verification email:', emailError);
-      // Continue anyway, user can request resend
+    // Send verification email if SMTP is configured
+    if (smtpConfigured) {
+      try {
+        await sendVerificationEmail(
+          validated.email,
+          `${process.env.NEXTAUTH_URL}/en/verify-email?token=${verificationToken}`
+        );
+      } catch (emailError) {
+        console.error('Failed to send verification email:', emailError);
+        // Continue anyway, user can request resend
+      }
     }
 
     return NextResponse.json(
       {
-        message: 'Registration successful. Please verify your email.',
+        message: smtpConfigured
+          ? 'Registration successful. Please verify your email.'
+          : 'Registration successful. You can now log in.',
         email: validated.email,
+        autoVerified: !smtpConfigured,
       },
       { status: 201 }
     );

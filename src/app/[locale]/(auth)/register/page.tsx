@@ -65,8 +65,13 @@ export default function RegisterPage() {
           setGeneralError(data.message || 'Registration failed. Please try again.');
         }
       } else {
-        // Redirect to verify email page
-        router.push(`/verify-email?email=${encodeURIComponent(validated.email)}`);
+        if (data.autoVerified) {
+          // No email verification needed — go straight to login
+          router.push(`/login?registered=true`);
+        } else {
+          // Redirect to verify email page
+          router.push(`/verify-email?email=${encodeURIComponent(validated.email)}`);
+        }
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
