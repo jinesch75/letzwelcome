@@ -111,8 +111,11 @@ async function getDashboardData(userId: string): Promise<{
 
 export default async function DashboardPage() {
   const t = await getTranslations('dashboard');
-  // TODO: Get userId from session/auth context
-  const userId = 'user-id-from-session';
+  // Get userId from session — the (main) layout already enforces auth,
+  // so session is guaranteed here, but we guard defensively.
+  const { auth } = await import('@/lib/auth');
+  const session = await auth();
+  const userId = session?.user?.id ?? '';
 
   const {
     user,

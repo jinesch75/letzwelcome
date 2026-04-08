@@ -15,10 +15,32 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const validated = reportSchema.parse(body);
 
+    // Ensure at least one target is specified
+    if (!validated.reportedUserId && !validated.matchId) {
+      return NextResponse.json(
+        { error: 'Either reportedUserId or matchId must be provided' },
+        { status: 400 }
+      );
+    }
+
+    // If matchId is provided but no reportedUserId, resolve it from the match
+    let reportedUserId = validated.reportedUserId;
+    if (!reportedUserId && validated.matchId) {
+      const match = await prisma.match.findUnique({
+        where: { id: validated.matchId },
+        select: { newcomerId: true, buddyId: true },
+      });
+      if (!match) {
+        return NextResponse.json({ error: 'Match not found' }, { status: 404 });
+      }
+      // Report the other party in the match
+      reportedUserId = match.newcomerId === userId ? match.buddyId : match.newcomerId;
+    }
+
     const report = await prisma.abuseReport.create({
       data: {
         reporterId: userId,
-        reportedUserId: validated.reportedUserId || '',
+        reportedUserId: reportedUserId!,
         matchId: validated.matchId,
         category: validated.category,
         description: validated.description,

@@ -120,7 +120,7 @@ export async function GET(req: NextRequest) {
     }
 
     if (!type || type === 'inactive') {
-      const twoYearsAgo = new Date(Date.now() - 24 * 30 * 12 * 60 * 60 * 1000);
+      const twoYearsAgo = new Date(Date.now() - 2 * 365 * 24 * 60 * 60 * 1000);
       const inactiveUsers = await prisma.user.findMany({
         where: {
           lastActiveAt: { lte: twoYearsAgo },

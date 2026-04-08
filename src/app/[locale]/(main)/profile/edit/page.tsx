@@ -126,7 +126,7 @@ export default function ProfileEditPage() {
 
       setSuccess(true);
       setTimeout(() => {
-        router.push(`/profile/${formData.currentRegion}`);
+        router.push('/profile');
       }, 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -137,7 +137,11 @@ export default function ProfileEditPage() {
 
   const handleDownloadData = async () => {
     try {
-      const response = await fetch('/api/gdpr/export');
+      const response = await fetch('/api/gdpr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'export' }),
+      });
       const data = await response.json();
       const element = document.createElement('a');
       element.setAttribute(

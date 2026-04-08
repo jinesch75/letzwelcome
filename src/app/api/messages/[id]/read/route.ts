@@ -61,6 +61,25 @@ export async function PATCH(
           { status: 403 }
         );
       }
+    } else if (message.conversation.eventId) {
+      // For event group conversations, verify user is a participant of the event
+      const eventParticipant = await prisma.eventParticipant.findUnique({
+        where: {
+          eventId_userId: {
+            eventId: message.conversation.eventId,
+            userId,
+          },
+        },
+      });
+      const isCreator = await prisma.event.findFirst({
+        where: { id: message.conversation.eventId, creatorId: userId },
+      });
+      if (!eventParticipant && !isCreator) {
+        return NextResponse.json(
+          { error: 'Not authorized' },
+          { status: 403 }
+        );
+      }
     }
 
     // Mark as read

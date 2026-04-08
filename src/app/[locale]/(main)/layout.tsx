@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 import MainShell from "@/components/layout/MainShell";
 
 export default async function MainLayout({
@@ -10,7 +11,8 @@ export default async function MainLayout({
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/en/login");
+    const locale = await getLocale();
+    redirect(`/${locale}/login`);
   }
 
   const user = {
