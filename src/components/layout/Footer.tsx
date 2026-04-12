@@ -7,25 +7,25 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-lw-blue-deep text-lw-cream mt-12">
+    <footer className="bg-lw-charcoal text-white mt-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* About Column */}
           <div>
-            <h3 className="text-lg font-display font-bold mb-4">{t('about.title')}</h3>
-            <p className="text-lw-cream/90 text-sm leading-relaxed">
+            <h3 className="text-sm font-semibold uppercase tracking-widest text-white/40 mb-4">{t('about.title')}</h3>
+            <p className="text-white/70 text-sm leading-relaxed">
               {t('about.description')}
             </p>
           </div>
 
           {/* Links Column */}
           <div>
-            <h3 className="text-lg font-display font-bold mb-4">{t('links.title')}</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-widest text-white/40 mb-4">{t('links.title')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   href="/privacy"
-                  className="text-lw-cream/90 hover:text-lw-gold transition-colors text-sm"
+                  className="text-white/70 hover:text-lw-gold transition-colors text-sm"
                 >
                   {t('links.privacy')}
                 </Link>
@@ -33,7 +33,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/terms"
-                  className="text-lw-cream/90 hover:text-lw-gold transition-colors text-sm"
+                  className="text-white/70 hover:text-lw-gold transition-colors text-sm"
                 >
                   {t('links.terms')}
                 </Link>
@@ -41,7 +41,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="text-lw-cream/90 hover:text-lw-gold transition-colors text-sm"
+                  className="text-white/70 hover:text-lw-gold transition-colors text-sm"
                 >
                   {t('links.about')}
                 </Link>
@@ -49,7 +49,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/contact"
-                  className="text-lw-cream/90 hover:text-lw-gold transition-colors text-sm"
+                  className="text-white/70 hover:text-lw-gold transition-colors text-sm"
                 >
                   {t('links.contact')}
                 </Link>
@@ -59,18 +59,18 @@ export default function Footer() {
 
           {/* Language Column */}
           <div>
-            <h3 className="text-lg font-display font-bold mb-4">{t('language.title')}</h3>
-            <p className="text-lw-cream/90 text-sm mb-3">
+            <h3 className="text-sm font-semibold uppercase tracking-widest text-white/40 mb-4">{t('language.title')}</h3>
+            <p className="text-white/70 text-sm mb-3">
               {t('language.description')}
             </p>
             <div className="flex gap-2">
-              <a href="/en" className="px-3 py-1 rounded bg-lw-cream/20 hover:bg-lw-cream/30 transition-colors text-xs font-medium">
+              <a href="/en" className="px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition-colors text-xs font-medium">
                 EN
               </a>
-              <a href="/fr" className="px-3 py-1 rounded bg-lw-cream/20 hover:bg-lw-cream/30 transition-colors text-xs font-medium">
+              <a href="/fr" className="px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition-colors text-xs font-medium">
                 FR
               </a>
-              <a href="/lb" className="px-3 py-1 rounded bg-lw-cream/20 hover:bg-lw-cream/30 transition-colors text-xs font-medium">
+              <a href="/lb" className="px-3 py-1 rounded bg-white/10 hover:bg-white/20 transition-colors text-xs font-medium">
                 LB
               </a>
             </div>
@@ -78,11 +78,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-lw-cream/20 pt-8 flex flex-col sm:flex-row items-center justify-between">
-          <p className="text-lw-cream/75 text-sm">
+        <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between">
+          <p className="text-white/50 text-sm">
             {t('tagline')} — {currentYear}
           </p>
-          <div className="flex items-center gap-2 mt-4 sm:mt-0 text-lw-cream/75 text-sm">
+          <div className="flex items-center gap-2 mt-4 sm:mt-0 text-white/50 text-sm">
             <span>Made with care in Luxembourg</span>
             <span className="text-lg">❤️</span>
           </div>

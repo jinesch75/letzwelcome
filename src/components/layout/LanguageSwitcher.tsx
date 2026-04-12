@@ -46,7 +46,7 @@ export default function LanguageSwitcher() {
     <div ref={menuRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="inline-flex items-center justify-center px-3 py-2 rounded-lg text-sm font-medium text-lw-blue-deep hover:bg-lw-gold-light transition-colors"
+        className="inline-flex items-center justify-center px-3 py-1.5 rounded-xl text-sm font-semibold text-lw-charcoal border border-lw-border bg-white hover:bg-lw-cream transition-colors gap-1"
         aria-label="Change language"
       >
         {localeLabels[currentLocale]}
@@ -61,19 +61,15 @@ export default function LanguageSwitcher() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-20 bg-lw-cream border border-lw-border rounded-lg shadow-lg z-50 animate-scale-in">
+        <div className="absolute right-0 mt-2 w-20 bg-white border border-lw-border rounded-xl shadow-lg z-50 animate-scale-in overflow-hidden">
           {locales.map((locale) => (
             <button
               key={locale}
               onClick={() => handleLocaleChange(locale)}
-              className={`block w-full text-left px-4 py-2 text-sm font-medium transition-colors ${
+              className={`block w-full text-left px-4 py-2 text-sm font-semibold transition-colors ${
                 currentLocale === locale
-                  ? 'bg-lw-gold-light text-lw-blue-deep'
-                  : 'text-lw-charcoal hover:bg-lw-gold-light'
-              } ${locale === locales[0] ? 'rounded-t-lg' : ''} ${
-                locale === locales[locales.length - 1]
-                  ? 'rounded-b-lg'
-                  : ''
+                  ? 'bg-lw-cream text-lw-charcoal'
+                  : 'text-lw-warm-gray hover:bg-lw-cream hover:text-lw-charcoal'
               }`}
             >
               {localeLabels[locale]}

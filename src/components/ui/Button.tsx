@@ -28,22 +28,22 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     // Base styles
     const baseClasses =
-      'inline-flex items-center justify-center font-body font-medium rounded-xl transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+      'inline-flex items-center justify-center font-display font-semibold rounded-2xl transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:cursor-not-allowed tracking-tight';
 
     // Size styles
     const sizeClasses = {
-      sm: 'px-3 py-1.5 text-sm',
-      md: 'px-4 py-2.5 text-base',
-      lg: 'px-6 py-3 text-lg',
+      sm: 'px-4 py-1.5 text-sm',
+      md: 'px-5 py-2.5 text-base',
+      lg: 'px-7 py-3.5 text-base',
     };
 
-    // Variant styles
+    // Variant styles — clean, minimal matching BL
     const variantClasses = {
-      primary: 'bg-lw-blue-deep text-lw-cream hover:bg-[#0f2438] focus-visible:outline-lw-blue-light',
+      primary: 'bg-lw-blue-deep text-white hover:bg-[#111d33] shadow-sm hover:shadow-md focus-visible:outline-lw-blue-light',
       secondary:
-        'border-2 border-lw-blue-deep text-lw-blue-deep hover:bg-lw-blue-deep hover:text-lw-cream focus-visible:outline-lw-blue-deep',
-      gold: 'bg-lw-gold text-lw-charcoal hover:bg-[#c69a36] focus-visible:outline-lw-gold',
-      danger: 'bg-lw-red text-lw-cream hover:bg-[#a02e23] focus-visible:outline-lw-red',
+        'border border-lw-border bg-white text-lw-charcoal hover:bg-lw-cream hover:border-lw-charcoal/30 focus-visible:outline-lw-blue-deep',
+      gold: 'bg-lw-gold text-lw-charcoal hover:bg-[#c69a36] shadow-sm focus-visible:outline-lw-gold',
+      danger: 'bg-lw-red text-white hover:bg-[#a02e23] focus-visible:outline-lw-red',
     };
 
     const finalClassName = `${baseClasses} ${sizeClasses[size]} ${variantClasses[variant]} ${className}`;

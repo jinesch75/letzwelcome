@@ -13,7 +13,7 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 
     const variantClasses = {
       default: '',
-      interactive: 'hover:shadow-md cursor-pointer',
+      interactive: 'hover:shadow-lg hover:-translate-y-0.5 cursor-pointer',
       featured: 'border-2 border-lw-gold',
     };
 

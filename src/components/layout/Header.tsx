@@ -35,15 +35,19 @@ export default function Header({ user, onSignOut, onMenuToggle }: HeaderProps) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-lw-cream border-b border-lw-border">
+      <header className="sticky top-0 z-40 bg-lw-cream border-b border-lw-border/70 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="w-10 h-10 rounded-lg bg-lw-blue-deep flex items-center justify-center text-lw-cream text-lg font-bold group-hover:bg-lw-blue-light transition-colors">
-                L
+            {/* Logo — "BL" monogram matching Beautiful Luxembourg brand */}
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <div className="flex items-baseline leading-none select-none">
+                <span className="text-2xl font-[900] text-[#C0392B] font-display tracking-tight">B</span>
+                <span className="text-2xl font-[900] text-lw-blue-deep font-display tracking-tight">L</span>
               </div>
-              <span className="text-xl font-bold text-lw-blue-deep font-display hidden sm:block">Letzwelcome</span>
+              <div className="hidden sm:block">
+                <span className="text-sm font-semibold text-lw-blue-deep font-display leading-none block">Beautiful</span>
+                <span className="text-sm font-semibold text-lw-blue-deep font-display leading-none block">Luxembourg</span>
+              </div>
             </Link>
 
             {/* Desktop Navigation */}
@@ -52,7 +56,7 @@ export default function Header({ user, onSignOut, onMenuToggle }: HeaderProps) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="px-3 py-2 text-sm font-medium text-lw-charcoal hover:text-lw-blue-deep hover:bg-lw-gold-light rounded-lg transition-all duration-200"
+                  className="px-3 py-2 text-sm font-semibold text-lw-charcoal/70 hover:text-lw-charcoal hover:bg-black/5 rounded-lg transition-all duration-200"
                 >
                   {link.label}
                 </Link>
